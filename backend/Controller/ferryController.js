@@ -6,6 +6,7 @@ const axios = require("axios");
 
 router.get("/departures", async (req, res) => {
   try {
+    // res.header("Access-Control-Allow-Origin", "*");
     const today = new Date();
     const twoMonthsLater = new Date(today.setMonth(today.getMonth() + 2));
     const ALGECIRAS = "ALGECEUT";

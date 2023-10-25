@@ -1,3 +1,29 @@
-.ClickFerry {
-  background-color: red;
+.MainClickFerry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  .Header {
+    background-color: red;
+  }
+  .Body {
+    display: flex;
+    margin: 2em;
+  }
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+  color: grey;
+}
+
+.react-calendar__tile--available {
+  background-color: green;
+  color: white;
+}
+
+.saved-date {
+  background-color: green;
 }
