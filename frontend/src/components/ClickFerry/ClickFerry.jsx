@@ -5,17 +5,20 @@ import "react-calendar/dist/Calendar.css";
 
 const ClickFerry = () => {
   const [date, setDate] = useState(new Date());
+  const [nextMonth, setNextMonth] = useState(
+    new Date(date.getFullYear(), date.getMonth() + 1, 1)
+  );
   const [savedData, setSavedData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDaysTrue, setSelectedDaysTrue] = useState([]);
 
   const handleFetch = async () => {
     try {
       const response = await fetch("http://localhost:8000/departures");
       const data = await response.json();
-      console.log(data);
       if (response.status === 200) {
-        console.log("Success");
-        setSavedData(data);
+        localStorage.setItem("all_data", JSON.stringify(data.data));
+        setSavedData(localStorage.getItem("all_data"));
         setIsLoading(false);
       } else {
         console.log("Error to fetch data");
@@ -25,12 +28,46 @@ const ClickFerry = () => {
     }
   };
 
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+    setNextMonth(new Date(newDate.getFullYear(), newDate.getMonth() + 1, 1));
+  };
+
+  const handleSelectedDays = (date) => {
+    const month = date.getMonth() + 1;
+    const selectedDays = Object.values(savedData);
+    const joinedString = selectedDays.join("");
+    const dataArray = JSON.parse("[" + joinedString + "]");
+    const arrayDates = Object.keys(dataArray[0]);
+    // console.log(arrayDates);
+    const filteredDates = arrayDates.filter((item) => {
+      const date = item.split("-")[1];
+      return date === month.toString();
+    });
+    // console.log(filteredDates);
+    const filteredDays = filteredDates.map((item) => {
+      const day = item.split("-")[2];
+      return day;
+    });
+    setSelectedDaysTrue(filteredDays.map(Number));
+  };
+
   useEffect(() => {
     handleFetch();
-    console.log("useEffect");
   }, []);
 
-  useEffect(() => {}, [savedData]);
+  useEffect(() => {
+    if (!isLoading) {
+      handleSelectedDays(date);
+    }
+  }, [!isLoading]);
+
+  useEffect(() => {
+    console.log(selectedDaysTrue);
+    console.log(selectedDaysTrue.includes(date.getDate()));
+    // console.log(selectedDaysTrue.map(Number));
+  }, [selectedDaysTrue]);
+
   return (
     <div className="MainClickFerry">
       <div className="Header">
@@ -40,8 +77,16 @@ const ClickFerry = () => {
         <span>Loading...</span>
       ) : (
         <div className="Body">
-          <Calendar onChange={setDate} value={date} />
-          <Calendar onChange={setDate} value={date} />
+          <Calendar
+            tileClassName={({ date }) =>
+              selectedDaysTrue.includes(date.getDate())
+                ? "custom-tile"
+                : "no-tile"
+            }
+            onChange={handleDateChange}
+            value={date}
+          />
+          <Calendar onChange={setDate} value={nextMonth} />
         </div>
       )}
     </div>

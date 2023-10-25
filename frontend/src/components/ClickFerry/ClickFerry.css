@@ -6,11 +6,11 @@
   height: 100vh;
   width: 100vw;
   .Header {
-    background-color: red;
+    font-style: italic;
   }
   .Body {
     display: flex;
-    margin: 2em;
+    margin: 1.5em;
   }
 }
 
@@ -18,12 +18,10 @@
   text-decoration: none;
   color: grey;
 }
-
-.react-calendar__tile--available {
-  background-color: green;
-  color: white;
+.custom-tile {
+  color: black;
 }
 
-.saved-date {
-  background-color: green;
+.no-tile {
+  color: grey;
 }
