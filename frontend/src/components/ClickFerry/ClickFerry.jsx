@@ -2,7 +2,6 @@ import "./ClickFerry.css";
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-
 const ClickFerry = () => {
   const [date, setDate] = useState(new Date());
   const [nextMonth, setNextMonth] = useState(
@@ -11,6 +10,7 @@ const ClickFerry = () => {
   const [savedData, setSavedData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDaysTrue, setSelectedDaysTrue] = useState([]);
+  const [selectedDaysTrue2, setSelectedDaysTrue2] = useState([]);
 
   const handleFetch = async () => {
     try {
@@ -51,6 +51,24 @@ const ClickFerry = () => {
     });
     setSelectedDaysTrue(filteredDays.map(Number));
   };
+  const handleSelectedDays2 = (date) => {
+    const month = date.getMonth() + 2;
+    const selectedDays = Object.values(savedData);
+    const joinedString = selectedDays.join("");
+    const dataArray = JSON.parse("[" + joinedString + "]");
+    const arrayDates = Object.keys(dataArray[0]);
+    // console.log(arrayDates);
+    const filteredDates = arrayDates.filter((item) => {
+      const date = item.split("-")[1];
+      return date === month.toString();
+    });
+    // console.log(filteredDates);
+    const filteredDays = filteredDates.map((item) => {
+      const day = item.split("-")[2];
+      return day;
+    });
+    setSelectedDaysTrue2(filteredDays.map(Number));
+  };
 
   useEffect(() => {
     handleFetch();
@@ -59,6 +77,7 @@ const ClickFerry = () => {
   useEffect(() => {
     if (!isLoading) {
       handleSelectedDays(date);
+      handleSelectedDays2(date);
     }
   }, [!isLoading]);
 
@@ -71,22 +90,32 @@ const ClickFerry = () => {
   return (
     <div className="MainClickFerry">
       <div className="Header">
-        <h1> - ClickFerry - </h1>
+        <h1>ClickFerry</h1>
       </div>
       {isLoading ? (
         <span>Loading...</span>
       ) : (
         <div className="Body">
+          <div className="calendar1">
+            <Calendar
+              tileClassName={({ date }) =>
+                selectedDaysTrue.includes(date.getDate())
+                  ? "custom-tile"
+                  : "no-tile"
+              }
+              onChange={handleDateChange}
+              value={date}
+            />
+          </div>
           <Calendar
             tileClassName={({ date }) =>
-              selectedDaysTrue.includes(date.getDate())
+              selectedDaysTrue2.includes(date.getDate())
                 ? "custom-tile"
                 : "no-tile"
             }
-            onChange={handleDateChange}
-            value={date}
+            onChange={setDate}
+            value={nextMonth}
           />
-          <Calendar onChange={setDate} value={nextMonth} />
         </div>
       )}
     </div>
